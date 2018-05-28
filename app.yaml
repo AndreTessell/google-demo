@@ -1,0 +1,19 @@
+runtime: ruby
+env: flex
+entrypoint: bundle exec rackup --port $PORT
+
+env_variables:
+  SECRET_KEY_BASE: fc30eaa81e7ae12a83ba9309616e07cd97cc58c492247e0a740007d1f328e064cf0df0abcc8494ce534780973441063addf174c01b8fc27eaee97839687c3c11
+
+beta_settings:
+  cloud_sql_instances: numeric-camp-205505:us-central1:google-autocomplete
+# This sample incurs costs to run on the App Engine flexible environment. 
+# The settings below are to reduce costs during testing and are not appropriate
+# for production use. For more information, see:
+# https://cloud.google.com/appengine/docs/flexible/ruby/configuring-your-app-with-app-yaml
+manual_scaling:
+  instances: 1
+resources:
+  cpu: 1
+  memory_gb: 2.0
+  disk_size_gb: 10

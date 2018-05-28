@@ -1,0 +1,123 @@
+<head>
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid black;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+<%= form_tag(products_index_path, :method => "get", id: "search-form") do %>
+<!-- text field tag=action,args,identifier,placeholdertext... -->
+<%= text_field_tag :search, params[:search], class: "search-query", placeholder: "namesearch", type: "search" , style: "width: 100%"%>  
+<%= submit_tag "Search" %>
+<%end%>
+<script type="text/javascript" charset="utf-8">
+$('#search').easyAutocomplete({
+    url: '/products/index.json',
+    getValue: "name",
+    list: {
+        match: {
+            enabled: true
+        }
+    }
+});
+</script>
+<script>
+function sortTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("main-table");
+  switching = true;
+  // Set the sorting direction to ascending:
+  dir = "asc";
+  /* Make a loop that will continue until
+  no switching has been done: */
+  while (switching) {
+    // Start by saying: no switching is done:
+    switching = false;
+    rows = table.getElementsByTagName("TR");
+    /* Loop through all table rows (except the
+    first, which contains table headers): */
+    for (i = 1; i < (rows.length - 1); i++) {
+      // Start by saying there should be no switching:
+      shouldSwitch = false;
+      /* Get the two elements you want to compare,
+      one from current row and one from the next: */
+      x = rows[i].getElementsByTagName("TD")[n];
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+      /* Check if the two rows should switch place,
+      based on the direction, asc or desc: */
+      if (dir == "asc") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      // Each time a switch is done, increase this count by 1:
+      switchcount ++;
+    } else {
+      /* If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again. */
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+</script>
+<h1>Products</h1>
+
+<table id="main-table" style="width:90%">
+  <tr>
+    <th>Image</th>
+    <th onclick="sortTable(1)">Name</th>
+    <th onclick="sortTable(2)">Type</th>
+    <th onclick="sortTable(3)">Price</th>
+    <th onclick="sortTable(4)">UPC</th>
+    <th onclick="sortTable(5)">Shipping Cost</th>
+    <th onclick="sortTable(6)">Description</th>
+    <th onclick="sortTable(7)">Manufacturer</th>
+    <th onclick="sortTable(9)">Model</th>
+  </tr>
+  <% @products.each do |p| %>
+  <tr>
+    <td><a href="<%=p.url%>"><img src=<%= p.image %> class="widthSet"></a></td>
+    <td><a href="<%=p.url%>"><%= p.name %></a></td>
+    <td><%= p.type_of %></td>
+    <td>$<%= p.price %></td>
+    <td><%= p.upc %></td>
+    <td>$<%= p.shipping %></td>
+    <td><%= p.description %></td>
+    <td><%= p.manufacturer %></td>
+    <td><%= p.model %></td>
+  </tr>
+  <% end %>
+</table>
+
+<%= will_paginate @products %>
+</body>
